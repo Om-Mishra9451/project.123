@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio Website</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #87CEEB;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #DC143C;
+            padding: 50px;
+            text-align: center;
+            border-bottom: 5px solid #FFD700;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 48px;
+            text-shadow: 3px 3px 5px black;
+            margin: 0;
+        }
+
+        .header p {
+            color: yellow;
+            font-size: 20px;
+            margin-top: 10px;
+        }
+
+        .navbar {
+            background-color: #32CD32;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 20px;
+            font-weight: bold;
+        }
+
+        .navbar a:hover {
+            color: yellow;
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .section {
+            background-color: white;
+            border: 3px solid #DC143C;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            color: #FF1493;
+            font-size: 36px;
+            text-decoration: underline;
+            margin-top: 0;
+        }
+
+        .about-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .skill-box {
+            background-color: #FFD700;
+            border: 2px solid #DC143C;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1 1 200px;
+            min-width: 150px;
+        }
+
+        .skill-box h3 {
+            color: #8B008B;
+            margin-top: 0;
+        }
+
+        .projects-container {
+            margin-top: 20px;
+        }
+
+        .project {
+            background-color: #E0FFFF;
+            border: 3px dashed #32CD32;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .project h3 {
+            color: #FF4500;
+            font-size: 24px;
+        }
+
+        .contact-form {
+            margin-top: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            display: block;
+            color: #8B008B;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #32CD32;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-field textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        .submit-btn {
+            background-color: #DC143C;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+        }
+
+        .submit-btn:hover {
+            background-color: #B22222;
+        }
+
+        .footer {
+            background-color: #32CD32;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            border-top: 5px solid #FFD700;
+        }
+
+        .footer a {
+            color: yellow;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        marquee {
+            background-color: #FFD700;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #FF1493;
+        }
+        .OM{
+            display: flex;
+        }
+        .omi{
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌟 OM MISHRA 🌟</h1>
+        <p>⭐ Web Developer & Designer ⭐</p>
+    </div>
+
+    <div class="navbar">
+        <a href="#about">ABOUT</a>
+        <a href="#skills">SKILLS</a>
+        <a href="#projects">PROJECTS</a>
+        <a href="#contact">CONTACT</a>
+    </div>
+
+    <marquee>✨ Welcome to my website! Check out my amazing work below! ✨</marquee>
+
+    <div class="container">
+        <div class="section" id="about">
+            <h2>About Me</h2>
+            <div class="OM">
+            <div class="about-text">
+                <p><b>Hello there!!!</b> My name is Om and I am a web developer.I am pursuing btech cse from pw-ioi . I really like making websites and I think I'm pretty good at it!</p>
+                <p>I learned HTML and CSS from my teacher Usama sir and now I can make awesome websites like this one. I started learning to code 2 months ago and it's been really fun!</p>
+                <p>In my free time I like to play video games and watch movies. Sometimes I also read coding tutorials online to learn new stuff.</p> 
+                
+             </div>
+             <div><img src="https://i.postimg.cc/dDMXzHR2/OM.jpg" class="omi" height="400px"> </div>
+             </div>
+             </div>
+
+             <div class="section" id="skills">
+             <h2>My Skills</h2>
+             <div class="skills-container">
+                 <div class="skill-box">
+                    <h3>HTML</h3>
+                    <p>I know all the tags like &lt;div&gt; and &lt;p&gt; and stuff!</p>
+                 </div>
+                 <div class="skill-box">
+                    <h3>CSS</h3>
+                    <p>I can make things colorful and pretty with CSS!</p>
+                 </div>
+                 <div class="skill-box">
+                    <h3>C</h3>
+                    <p>I have a good grasp in c language </p>
+                 </div>
+                 <div class="skill-box">
+                    <h3>Design</h3>
+                    <p>I'm good at picking colors as you can see!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="projects">
+            <h2>My Projects</h2>
+            <div class="projects-container">
+                <div class="project">
+                    <h3>Project #1 - <a href="https://om-mishra9451.github.io/project.123/" >Shopping website </a></h3>
+                    <p>This is my youtube prototype made by using i-frames and semantic tags</p>
+                </div>
+                <div class="project">
+                    <h3>Project #2 - <a href="https://om-mishra9451.github.io/project.123/rightgrid.html">a fixed bar in right side</a>  </h3>
+                    <p>Simple website using hover and bootstrap-icons</p>
+                </div>
+                <div class="project">
+                    <h3>Project #3 - <a href="https://om-mishra9451.github.io/project.123/youtube.html">Youtube prototype</a></h3>
+                    <p>A prototype of youtube made by using iframes , marquee , and other semantic tags</p>
+                </div>
+                <div class="project">
+                    <h3>Project #4 - <a href="https://om-mishra9451.github.io/project.123/webdev.html">Landkit Page</a></h3>
+                    <p>A simple land kit page </p>
+                </div>
+                <div class="project">
+                    <h3>Project #5 - <a href="https://om-mishra9451.github.io/project.123/IPL.html">Table Making</a></h3>
+                    <p>A simple land kit page </p>
+                </div>
+            </div>
+        </div>
+
+        
+    <div class="footer">
+        
+        <p><h1>Follow me on social media!</h1></p>
+        <a href="https://github.com/Om-Mishra9451/project.123" target="_blank"><h1>GitHub</h1></a>
+        <a href="https://www.linkedin.com/in/om-mishra-aa3101381/" target="_blank"><h1>linkedin</h1></a>
+    </div>
+   
+    
+</body>
+</html>
