@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoSPI PAIMANA - AI Infrastructure Risk Intelligence & Early Warning System</title>
+  <!-- Tailwind CSS & Lucide Icons CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05); }
+    .nav-active { background-color: #1e40af; color: #ffffff; font-weight: 600; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+
+  <!-- Left Sidebar Navigation -->
+  <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between shrink-0 shadow-xl z-20">
+    <div>
+      <!-- Brand Header -->
+      <div class="px-6 py-5 border-b border-slate-800 flex items-center gap-3">
+        <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/30">
+          <i data-lucide="shield-alert" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-sm font-bold text-white tracking-wide flex items-center gap-1.5">
+            PAIMANA <span class="bg-blue-500/20 text-blue-400 text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold">AI/ML</span>
+          </div>
+          <p class="text-[11px] text-slate-400">MoSPI — IPMD & DIID</p>
+        </div>
+      </div>
+
+      <!-- Problem Statement Badge -->
+      <div class="px-5 py-3">
+        <div class="bg-slate-800/80 border border-slate-700/60 rounded-lg px-3 py-2 text-xs">
+          <div class="text-blue-400 font-semibold flex items-center gap-1">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i> SIH26-26103
+          </div>
+          <div class="text-slate-400 text-[10px] mt-0.5 truncate">Infrastructure Risk Intelligence</div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="px-3 space-y-1 text-sm font-medium">
+        <button onclick="switchTab('tab-national')" id="nav-national" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg nav-active transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> National Overview
+        </button>
+        <button onclick="switchTab('tab-explorer')" id="nav-explorer" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="folder-search" class="w-4 h-4"></i> Project Explorer
+        </button>
+        <button onclick="switchTab('tab-intelligence')" id="nav-intelligence" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="cpu" class="w-4 h-4"></i> Project Intelligence (XAI)
+        </button>
+        <button onclick="switchTab('tab-early-warning')" id="nav-early-warning" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="bell-ring" class="w-4 h-4"></i> Early Warning Alerts
+          <span class="ml-auto bg-red-500/20 text-red-400 text-[10px] px-1.5 py-0.5 rounded-full font-bold">89</span>
+        </button>
+        <button onclick="switchTab('tab-cuf')" id="nav-cuf" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="flask-conical" class="w-4 h-4"></i> CUF Feature Ablation
+        </button>
+        <button onclick="switchTab('tab-simulator')" id="nav-simulator" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="sliders" class="w-4 h-4"></i> What-If Simulator
+        </button>
+        <button onclick="switchTab('tab-assistant')" id="nav-assistant" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <i data-lucide="bot" class="w-4 h-4"></i> AI Project Assistant (RAG)
+        </button>
+      </nav>
+    </div>
+
+    <!-- Role Status & Live Ingestion -->
+    <div class="p-4 border-t border-slate-800 text-xs">
+      <div class="flex items-center justify-between text-slate-400 mb-2">
+        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> PAIMANA Live Sync</span>
+        <span class="text-[10px] text-slate-500">Apr 2026</span>
+      </div>
+      <div class="bg-slate-800/60 p-2.5 rounded-lg flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">PO</div>
+        <div>
+          <div class="text-white font-medium text-[11px]">Policymaker Mode</div>
+          <div class="text-[10px] text-slate-400">MoSPI Central HQ</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    
+    <!-- Top Global Header -->
+    <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0 shadow-sm">
+      <div class="flex items-center gap-3">
+        <h1 id="page-title" class="text-lg font-bold text-slate-900">National Infrastructure Monitoring Overview</h1>
+        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded border border-blue-200 font-medium">1,981 Monitored Central Projects</span>
+      </div>
+      
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+          <input type="text" placeholder="Search project by ID, sector, agency..." class="pl-9 pr-4 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-72 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+        <button class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition border border-slate-200">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export MoSPI Report
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Main View Container -->
+    <main class="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-6">
+
+      <!-- ========================================================================= -->
+      <!-- TAB 1: NATIONAL OVERVIEW (Screen 1) -->
+      <!-- ========================================================================= -->
+      <div id="tab-national" class="space-y-6">
+        
+        <!-- KPI Stat Banners -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div class="glass-card p-4 border-l-4 border-blue-600">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Monitored</span>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1">1,981</div>
+            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <span class="text-emerald-600 font-semibold">17 Ministries</span> | 22 Sectors
+            </div>
+          </div>
+          <div class="glass-card p-4 border-l-4 border-indigo-600">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Portfolio Cost</span>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1">₹42.78L Cr</div>
+            <div class="text-[11px] text-amber-600 font-semibold mt-1">
+              +15.2% Cost Drift (Orig: ₹37.13L)
+            </div>
+          </div>
+          <div class="glass-card p-4 border-l-4 border-amber-500">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cumulative Expenditure</span>
+            <div class="text-2xl font-extrabold text-slate-900 mt-1">₹20.36L Cr</div>
+            <div class="text-[11px] text-slate-500 mt-1">47.6% Financial Utilization</div>
+          </div>
+          <div class="glass-card p-4 border-l-4 border-rose-500">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Projects At High Risk</span>
+            <div class="text-2xl font-extrabold text-rose-600 mt-1">342</div>
+            <div class="text-[11px] text-rose-500 font-semibold mt-1">17.2% of Portfolio</div>
+          </div>
+          <div class="glass-card p-4 border-l-4 border-red-700">
+            <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Critical Warning Alerts</span>
+            <div class="text-2xl font-extrabold text-red-700 mt-1">89</div>
+            <div class="text-[11px] text-red-600 font-semibold mt-1 animate-pulse">Immediate Action Needed</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Sector Risk Heatmap / Bar -->
+          <div class="glass-card p-5 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">Sector-Wise Cost & Schedule Escalation Index</h3>
+                <p class="text-xs text-slate-500">Predicted median cost drift (%) and schedule delay (months)</p>
+              </div>
+              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-1 rounded font-medium">Model: LightGBM v2.4</span>
+            </div>
+            <div class="h-64">
+              <canvas id="sectorChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Overall Risk Distribution Donut -->
+          <div class="glass-card p-5">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-sm font-bold text-slate-900">Portfolio Risk Segmentation</h3>
+              <i data-lucide="pie-chart" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">Calibrated 0-100 Composite Score</p>
+            <div class="h-52 flex items-center justify-center">
+              <canvas id="riskDonutChart"></canvas>
+            </div>
+            <div class="grid grid-cols-2 gap-2 mt-4 text-[11px] pt-3 border-t border-slate-100">
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Low (0-30): <strong>1,120</strong></div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Med (31-60): <strong>519</strong></div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> High (61-80): <strong>253</strong></div>
+              <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Critical (81-100): <strong>89</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- High Priority Flagged Projects Table Preview -->
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Top High-Risk Projects Requiring Policy Intervention</h3>
+              <p class="text-xs text-slate-500">Projects with Risk Score &gt; 80 and high predictive overrun probability</p>
+            </div>
+            <button onclick="switchTab('tab-explorer')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+              View All 1,981 Projects <i data-lucide="arrow-right" class="w-3 h-3"></i>
+            </button>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-700 uppercase font-semibold text-[10px]">
+                <tr>
+                  <th class="p-3">Project ID & Title</th>
+                  <th class="p-3">Ministry / Agency</th>
+                  <th class="p-3">Budget (Orig → Rev)</th>
+                  <th class="p-3">Physical vs Spend</th>
+                  <th class="p-3">Predicted Overrun</th>
+                  <th class="p-3">Risk Score</th>
+                  <th class="p-3">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openProjectDetail('PRJ-NHAI-882')">
+                  <td class="p-3">
+                    <div class="font-bold text-slate-900">PRJ-NHAI-882</div>
+                    <div class="text-[11px] text-slate-500 truncate max-w-xs">NH-66 Four-Laning & Bridge Package 4</div>
+                  </td>
+                  <td class="p-3 text-slate-600">MoRTH / NHAI</td>
+                  <td class="p-3">₹2,400 Cr → <span class="text-red-600 font-bold">₹3,180 Cr</span></td>
+                  <td class="p-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-emerald-700">38%</span> vs <span class="text-rose-700 font-bold">61%</span>
+                      <span class="text-[10px] text-red-600 bg-red-50 px-1 rounded font-bold">-23% Lag</span>
+                    </div>
+                  </td>
+                  <td class="p-3">
+                    <div class="text-rose-600 font-bold">+₹420 Cr (82% prob)</div>
+                    <div class="text-[10px] text-slate-500">Delay: +9 Months</div>
+                  </td>
+                  <td class="p-3">
+                    <span class="bg-red-100 text-red-800 text-[11px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 w-fit">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> 86 / 100
+                    </span>
+                  </td>
+                  <td class="p-3">
+                    <button class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded text-xs transition font-semibold">Inspect XAI</button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openProjectDetail('PRJ-RAIL-419')">
+                  <td class="p-3">
+                    <div class="font-bold text-slate-900">PRJ-RAIL-419</div>
+                    <div class="text-[11px] text-slate-500 truncate max-w-xs">Western Dedicated Freight Corridor (Phase II)</div>
+                  </td>
+                  <td class="p-3 text-slate-600">Railways / DFCCIL</td>
+                  <td class="p-3">₹12,500 Cr → <span class="text-red-600 font-bold">₹15,400 Cr</span></td>
+                  <td class="p-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-emerald-700">52%</span> vs <span class="text-rose-700 font-bold">71%</span>
+                      <span class="text-[10px] text-red-600 bg-red-50 px-1 rounded font-bold">-19% Lag</span>
+                    </div>
+                  </td>
+                  <td class="p-3">
+                    <div class="text-rose-600 font-bold">+₹1,850 Cr (89% prob)</div>
+                    <div class="text-[10px] text-slate-500">Delay: +14 Months</div>
+                  </td>
+                  <td class="p-3">
+                    <span class="bg-red-100 text-red-800 text-[11px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 w-fit">
+                      <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> 89 / 100
+                    </span>
+                  </td>
+                  <td class="p-3">
+                    <button class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded text-xs transition font-semibold">Inspect XAI</button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50 transition cursor-pointer" onclick="openProjectDetail('PRJ-PWR-104')">
+                  <td class="p-3">
+                    <div class="font-bold text-slate-900">PRJ-PWR-104</div>
+                    <div class="text-[11px] text-slate-500 truncate max-w-xs">800 MW Supercritical Thermal Expansion Stage III</div>
+                  </td>
+                  <td class="p-3 text-slate-600">Power / NTPC</td>
+                  <td class="p-3">₹5,600 Cr → <span class="text-red-600 font-bold">₹6,200 Cr</span></td>
+                  <td class="p-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-emerald-700">65%</span> vs <span class="text-slate-700">69%</span>
+                      <span class="text-[10px] text-amber-600 bg-amber-50 px-1 rounded font-bold">-4% Lag</span>
+                    </div>
+                  </td>
+                  <td class="p-3">
+                    <div class="text-amber-600 font-bold">+₹320 Cr (64% prob)</div>
+                    <div class="text-[10px] text-slate-500">Delay: +4 Months</div>
+                  </td>
+                  <td class="p-3">
+                    <span class="bg-amber-100 text-amber-800 text-[11px] px-2 py-0.5 rounded-full font-extrabold flex items-center gap-1 w-fit">
+                      <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> 68 / 100
+                    </span>
+                  </td>
+                  <td class="p-3">
+                    <button class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white px-2.5 py-1 rounded text-xs transition font-semibold">Inspect XAI</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 2: PROJECT EXPLORER (Screen 2) -->
+      <!-- ========================================================================= -->
+      <div id="tab-explorer" class="hidden space-y-6">
+        <div class="glass-card p-5">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Ministry Filter</label>
+              <select class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                <option>All Ministries (17)</option>
+                <option>Ministry of Road Transport & Highways</option>
+                <option>Ministry of Railways</option>
+                <option>Ministry of Power</option>
+                <option>Ministry of Petroleum & Natural Gas</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Sector</label>
+              <select class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                <option>All Sectors (22)</option>
+                <option>Transport & Logistics</option>
+                <option>Energy & Power</option>
+                <option>Water & Sanitation</option>
+                <option>Coal, Steel & Mining</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Risk Classification</label>
+              <select class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                <option>All Risk Levels</option>
+                <option>Critical (81 - 100)</option>
+                <option>High (61 - 80)</option>
+                <option>Medium (31 - 60)</option>
+                <option>Low (0 - 30)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Budget Scale Tier</label>
+              <select class="w-full text-xs p-2 bg-slate-50 border border-slate-200 rounded-lg">
+                <option>All Sizes (&gt; ₹150 Cr)</option>
+                <option>Mega Projects (&gt; ₹1,000 Cr)</option>
+                <option>Large Projects (₹500 - ₹1,000 Cr)</option>
+                <option>Medium Projects (₹150 - ₹500 Cr)</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="text-xs text-slate-500 mb-2 flex items-center justify-between">
+            <span>Showing <strong>1,981</strong> total Central Sector projects</span>
+            <span class="text-blue-600 font-semibold cursor-pointer">Reset All Filters</span>
+          </div>
+
+          <div class="overflow-x-auto border border-slate-100 rounded-lg">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-700 uppercase font-semibold text-[10px]">
+                <tr>
+                  <th class="p-3">Project Code</th>
+                  <th class="p-3">Project Details</th>
+                  <th class="p-3">State / Agency</th>
+                  <th class="p-3">Original Date</th>
+                  <th class="p-3">Predicted Delay</th>
+                  <th class="p-3">Cost Drift (%)</th>
+                  <th class="p-3">Risk Score</th>
+                  <th class="p-3">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-bold text-slate-800">PRJ-NHAI-882</td>
+                  <td class="p-3">NH-66 Four-Laning & Bridge Package 4</td>
+                  <td class="p-3 text-slate-600">Maharashtra / NHAI</td>
+                  <td class="p-3 text-slate-600">Jan 2027</td>
+                  <td class="p-3 font-bold text-red-600">+9 Months (Oct 2027)</td>
+                  <td class="p-3 font-bold text-red-600">+18.4% (₹420 Cr)</td>
+                  <td class="p-3"><span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold">86 (Critical)</span></td>
+                  <td class="p-3"><button onclick="openProjectDetail('PRJ-NHAI-882')" class="text-blue-600 hover:underline font-semibold">Analyze</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-bold text-slate-800">PRJ-RAIL-419</td>
+                  <td class="p-3">Western Dedicated Freight Corridor (Phase II)</td>
+                  <td class="p-3 text-slate-600">Gujarat / DFCCIL</td>
+                  <td class="p-3 text-slate-600">Dec 2026</td>
+                  <td class="p-3 font-bold text-red-600">+14 Months (Feb 2028)</td>
+                  <td class="p-3 font-bold text-red-600">+23.2% (₹1,850 Cr)</td>
+                  <td class="p-3"><span class="bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold">89 (Critical)</span></td>
+                  <td class="p-3"><button onclick="openProjectDetail('PRJ-RAIL-419')" class="text-blue-600 hover:underline font-semibold">Analyze</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-bold text-slate-800">PRJ-PWR-104</td>
+                  <td class="p-3">800 MW Supercritical Thermal Expansion</td>
+                  <td class="p-3 text-slate-600">Odisha / NTPC</td>
+                  <td class="p-3 text-slate-600">Aug 2027</td>
+                  <td class="p-3 font-bold text-amber-600">+4 Months (Dec 2027)</td>
+                  <td class="p-3 font-bold text-amber-600">+10.7% (₹320 Cr)</td>
+                  <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">68 (High)</span></td>
+                  <td class="p-3"><button onclick="openProjectDetail('PRJ-PWR-104')" class="text-blue-600 hover:underline font-semibold">Analyze</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-bold text-slate-800">PRJ-METRO-05</td>
+                  <td class="p-3">Bangalore Metro Rail Phase 2B (Airport Line)</td>
+                  <td class="p-3 text-slate-600">Karnataka / BMRCL</td>
+                  <td class="p-3 text-slate-600">Jun 2026</td>
+                  <td class="p-3 font-bold text-amber-600">+6 Months (Dec 2026)</td>
+                  <td class="p-3 font-bold text-amber-600">+8.5% (₹480 Cr)</td>
+                  <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">62 (High)</span></td>
+                  <td class="p-3"><button onclick="openProjectDetail('PRJ-METRO-05')" class="text-blue-600 hover:underline font-semibold">Analyze</button></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-3 font-mono font-bold text-slate-800">PRJ-PETRO-22</td>
+                  <td class="p-3">Paradip to Numaligarh Crude Pipeline Expansion</td>
+                  <td class="p-3 text-slate-600">Assam / IOCL</td>
+                  <td class="p-3 text-slate-600">Nov 2026</td>
+                  <td class="p-3 font-bold text-emerald-600">On Schedule</td>
+                  <td class="p-3 font-bold text-emerald-600">+1.2% (Within Cont.)</td>
+                  <td class="p-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">24 (Low)</span></td>
+                  <td class="p-3"><button onclick="openProjectDetail('PRJ-PETRO-22')" class="text-blue-600 hover:underline font-semibold">Analyze</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 3: PROJECT INTELLIGENCE & XAI (Screen 3) -->
+      <!-- ========================================================================= -->
+      <div id="tab-intelligence" class="hidden space-y-6">
+        
+        <!-- Project Selected Banner -->
+        <div class="glass-card p-5 bg-gradient-to-r from-slate-900 to-blue-950 text-white border-0 shadow-lg">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="bg-blue-500/30 text-blue-300 text-xs px-2 py-0.5 rounded font-mono font-semibold">PRJ-NHAI-882</span>
+                <span class="bg-red-500/20 text-red-300 text-xs px-2 py-0.5 rounded font-bold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> CRITICAL RISK (86 / 100)
+                </span>
+                <span class="text-slate-400 text-xs">MoRTH • NHAI • Highways</span>
+              </div>
+              <h2 class="text-xl font-extrabold text-white">NH-66 Four-Laning & Multi-Axle Bridge Package 4</h2>
+              <p class="text-xs text-slate-300 mt-1">Sanctioned: ₹2,400 Cr | Latest Revised: ₹3,180 Cr | Expenditure: ₹1,940 Cr (61%)</p>
+            </div>
+            <div class="flex gap-3 shrink-0">
+              <button onclick="switchTab('tab-simulator')" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow">
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Launch What-If Sandbox
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Predictive Intelligence Output Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="glass-card p-5 border-t-4 border-rose-600">
+            <span class="text-xs font-bold text-slate-500 uppercase">Cost Overrun Forecast</span>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div class="text-3xl font-extrabold text-rose-600">₹420 Cr</div>
+              <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2 py-0.5 rounded">82% Probability</span>
+            </div>
+            <div class="text-xs text-slate-600 mt-2 font-medium">Expected final cost: <strong class="text-slate-900">₹3,600 Cr (+18.4%)</strong></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3">
+              <div class="bg-rose-600 h-2 rounded-full" style="width: 82%"></div>
+            </div>
+          </div>
+
+          <div class="glass-card p-5 border-t-4 border-amber-500">
+            <span class="text-xs font-bold text-slate-500 uppercase">Time Overrun Forecast</span>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div class="text-3xl font-extrabold text-amber-600">9 Months</div>
+              <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-0.5 rounded">76% Probability</span>
+            </div>
+            <div class="text-xs text-slate-600 mt-2 font-medium">Target Completion: <strong class="text-slate-900">Oct 2027 (Orig: Jan 2027)</strong></div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3">
+              <div class="bg-amber-500 h-2 rounded-full" style="width: 76%"></div>
+            </div>
+          </div>
+
+          <div class="glass-card p-5 border-t-4 border-blue-600">
+            <span class="text-xs font-bold text-slate-500 uppercase">Peer Historical Benchmark</span>
+            <div class="mt-2 flex items-baseline justify-between">
+              <div class="text-3xl font-extrabold text-blue-700">+18.7%</div>
+              <span class="text-xs text-slate-500">Cohort: N=42 Projects</span>
+            </div>
+            <div class="text-xs text-slate-600 mt-2 font-medium">Peer Median: <strong class="text-slate-900">+14.2% Cost | +11 mo Time</strong></div>
+            <div class="text-[11px] text-rose-600 font-semibold mt-2">Tracking 4.5% worse than historical peer median</div>
+          </div>
+        </div>
+
+        <!-- Explainable AI (TreeSHAP Risk Attribution) & Milestone Progress -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- TreeSHAP Feature Importance -->
+          <div class="glass-card p-5">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                  <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i> TreeSHAP Explainability Breakdown
+                </h3>
+                <p class="text-xs text-slate-500">Root-cause factors driving the 86/100 risk score</p>
+              </div>
+              <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-mono font-bold">Exact Local SHAP</span>
+            </div>
+
+            <div class="space-y-3 mt-4 text-xs">
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>Physical-Financial Progress Divergence</span>
+                  <span class="text-rose-600 font-mono">+25.0% Risk</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 flex">
+                  <div class="bg-rose-500 h-2.5 rounded-full" style="width: 25%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Physical progress (38%) severely lags cumulative spend (61%)</div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>Critical Milestone Backlog & Pier Delays</span>
+                  <span class="text-rose-600 font-mono">+21.2% Risk</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 flex">
+                  <div class="bg-rose-500 h-2.5 rounded-full" style="width: 21.2%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Milestone M3 (Bridge Pier Foundation) overdue by 114 days</div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>Historical Sector Overrun Coefficient</span>
+                  <span class="text-rose-600 font-mono">+18.1% Risk</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 flex">
+                  <div class="bg-rose-500 h-2.5 rounded-full" style="width: 18.1%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-0.5">Highways sector experiences 21.4% average historical cost creep</div>
+              </div>
+
+              <div>
+                <div class="flex justify-between font-semibold mb-1">
+                  <span>High Historical Agency Execution Reliability</span>
+                  <span class="text-emerald-600 font-mono">-10.0% Mitigator</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-2.5 flex justify-end">
+                  <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 10%"></div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-0.5">NHAI execution track record reduces extreme tail risk</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone Tracker & Prescriptive Recommendation -->
+          <div class="space-y-6">
+            <div class="glass-card p-5">
+              <h3 class="text-sm font-bold text-slate-900 mb-3">Milestone Progress & Critical Path</h3>
+              <div class="space-y-3 text-xs">
+                <div class="flex items-center justify-between p-2 rounded bg-emerald-50 border border-emerald-200">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                    <span class="font-semibold text-emerald-900">M1: Land ROW & Environmental Sanctions</span>
+                  </div>
+                  <span class="text-[10px] text-emerald-700 font-bold">100% Completed</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-emerald-50 border border-emerald-200">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                    <span class="font-semibold text-emerald-900">M2: Earthwork & Embankment (50 km)</span>
+                  </div>
+                  <span class="text-[10px] text-emerald-700 font-bold">100% Completed</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-rose-50 border border-rose-200">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-600"></i>
+                    <span class="font-semibold text-rose-900">M3: Bridge Pier Substructures & Piling</span>
+                  </div>
+                  <span class="text-[10px] text-rose-700 font-bold">114 Days Overdue</span>
+                </div>
+                <div class="flex items-center justify-between p-2 rounded bg-slate-50 border border-slate-200 text-slate-500">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                    <span>M4: Bituminous Paving & Guardrails</span>
+                  </div>
+                  <span class="text-[10px]">Scheduled: Mar 2027</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Prescriptive Action Box -->
+            <div class="glass-card p-4 bg-amber-50/70 border-amber-200">
+              <div class="text-xs font-bold text-amber-900 flex items-center gap-1.5 mb-1">
+                <i data-lucide="check-check" class="w-4 h-4 text-amber-600"></i> Recommended MoSPI Intervention
+              </div>
+              <p class="text-xs text-amber-800 leading-relaxed">
+                Dispatch an inter-departmental technical audit team to resolve the piling contractor dispute on Milestone M3. Accelerating Milestone M3 by 60 days reduces overall projected cost escalation from <strong>₹420 Cr to ₹190 Cr</strong>.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 4: EARLY WARNING ALERTS (Screen 4) -->
+      <!-- ========================================================================= -->
+      <div id="tab-early-warning" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Early Warning Signal Triage Hub</h2>
+            <p class="text-xs text-slate-500">Continuous anomaly detection flagging emerging risks 6+ months before official project revisions</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="px-3 py-1 text-xs bg-red-600 text-white rounded font-semibold">Critical (89)</button>
+            <button class="px-3 py-1 text-xs bg-slate-100 text-slate-700 rounded font-semibold">Warning (164)</button>
+            <button class="px-3 py-1 text-xs bg-slate-100 text-slate-700 rounded font-semibold">Watch (266)</button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Alert 1 -->
+          <div class="glass-card p-4 border-l-4 border-red-600 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded">🔴 CRITICAL ALERT</span>
+                <span class="font-mono text-xs font-bold text-slate-900">PRJ-NHAI-882 (NH-66 Package 4)</span>
+                <span class="text-slate-400 text-xs">• 2 hours ago</span>
+              </div>
+              <div class="text-xs font-semibold text-slate-800">Physical progress (38%) lags cumulative financial spend (61%) by 23.0%</div>
+              <p class="text-xs text-slate-500">Milestone M3 (Bridge Pier) overdue by 114 days. Expenditure velocity exceeds sector benchmark by 1.42x.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openProjectDetail('PRJ-NHAI-882')" class="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700">View Deep Dive</button>
+              <button class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded text-xs font-semibold hover:bg-slate-200">Log Action</button>
+            </div>
+          </div>
+
+          <!-- Alert 2 -->
+          <div class="glass-card p-4 border-l-4 border-red-600 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="bg-red-100 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded">🔴 CRITICAL ALERT</span>
+                <span class="font-mono text-xs font-bold text-slate-900">PRJ-RAIL-419 (Western Freight Corridor)</span>
+                <span class="text-slate-400 text-xs">• 5 hours ago</span>
+              </div>
+              <div class="text-xs font-semibold text-slate-800">Repeated sanction revision threshold exceeded (3rd Revision pending)</div>
+              <p class="text-xs text-slate-500">Overrun probability increased from 64% to 89% following signaling vendor contract renegotiation.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openProjectDetail('PRJ-RAIL-419')" class="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700">View Deep Dive</button>
+              <button class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded text-xs font-semibold hover:bg-slate-200">Log Action</button>
+            </div>
+          </div>
+
+          <!-- Alert 3 -->
+          <div class="glass-card p-4 border-l-4 border-orange-500 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="bg-orange-100 text-orange-800 text-[10px] font-bold px-2 py-0.5 rounded">🟠 WARNING ALERT</span>
+                <span class="font-mono text-xs font-bold text-slate-900">PRJ-PWR-104 (800 MW Supercritical Expansion)</span>
+                <span class="text-slate-400 text-xs">• Yesterday</span>
+              </div>
+              <div class="text-xs font-semibold text-slate-800">Turbine procurement milestone timeline drift of 4 months detected</div>
+              <p class="text-xs text-slate-500">Current progress velocity indicates possible completion slippage into Q4 FY27.</p>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button onclick="openProjectDetail('PRJ-PWR-104')" class="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-semibold hover:bg-blue-700">View Deep Dive</button>
+              <button class="px-3 py-1.5 bg-slate-100 text-slate-700 rounded text-xs font-semibold hover:bg-slate-200">Log Action</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 5: CUF FEATURE ABLATION (Section 21 in PRD) -->
+      <!-- ========================================================================= -->
+      <div id="tab-cuf" class="hidden space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Mandated CUF Feature Sufficiency & ML Evaluation</h2>
+          <p class="text-xs text-slate-500">Evaluating whether existing Common Upload Form (CUF) fields are sufficient or require external enriched variables</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Comparative Benchmark Card -->
+          <div class="glass-card p-5">
+            <h3 class="text-sm font-bold text-slate-900 mb-2">Model A (CUF Only) vs. Model B (Enriched Features)</h3>
+            <p class="text-xs text-slate-500 mb-4">Empirical evaluation on 1,981 historical & active MoSPI project records</p>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-100 text-slate-700 font-semibold text-[10px]">
+                  <tr>
+                    <th class="p-2.5">Evaluation Metric</th>
+                    <th class="p-2.5">Model A (CUF Only)</th>
+                    <th class="p-2.5 bg-blue-50 text-blue-900">Model B (Extended)</th>
+                    <th class="p-2.5">Impact / Delta</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium">
+                  <tr>
+                    <td class="p-2.5 font-bold">High-Risk Recall</td>
+                    <td class="p-2.5">68.0%</td>
+                    <td class="p-2.5 bg-blue-50/50 font-extrabold text-blue-700">89.4%</td>
+                    <td class="p-2.5 text-emerald-600 font-bold">+21.4% Recall</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 font-bold">ROC-AUC Score</td>
+                    <td class="p-2.5">0.77</td>
+                    <td class="p-2.5 bg-blue-50/50 font-extrabold text-blue-700">0.91</td>
+                    <td class="p-2.5 text-emerald-600 font-bold">+0.14 Discrimination</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 font-bold">F1-Score</td>
+                    <td class="p-2.5">0.71</td>
+                    <td class="p-2.5 bg-blue-50/50 font-extrabold text-blue-700">0.85</td>
+                    <td class="p-2.5 text-emerald-600 font-bold">+0.14 Reliability</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 font-bold">Cost Overrun MAE</td>
+                    <td class="p-2.5">14.8% Error</td>
+                    <td class="p-2.5 bg-blue-50/50 font-extrabold text-blue-700">6.2% Error</td>
+                    <td class="p-2.5 text-emerald-600 font-bold">-8.6% Lower Error</td>
+                  </tr>
+                  <tr>
+                    <td class="p-2.5 font-bold">ML vs. Linear Baseline</td>
+                    <td class="p-2.5">Linear: 61.2%</td>
+                    <td class="p-2.5 bg-blue-50/50 font-extrabold text-blue-700">XGBoost: 89.4%</td>
+                    <td class="p-2.5 text-emerald-600 font-bold">+28.2% Gain</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Policy Recommendation Box -->
+          <div class="glass-card p-5 space-y-4">
+            <h3 class="text-sm font-bold text-slate-900">Key Takeaway for MoSPI Policy Reform</h3>
+            <div class="p-3 bg-blue-50 rounded-lg border border-blue-200 text-xs text-blue-900 leading-relaxed">
+              <strong>Evaluation Finding:</strong> Current CUF telemetry captures essential financial accounting data, but lacks dynamic contractor performance indices and land acquisition telemetry. Mandating 3 new fields in future CUF revisions increases high-risk project detection recall by <strong>21.4%</strong>.
+            </div>
+
+            <div class="text-xs font-semibold text-slate-700">Recommended New CUF Fields:</div>
+            <ul class="text-xs space-y-2 text-slate-600">
+              <li class="flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Contractor Historical Execution & Solvency Index</li>
+              <li class="flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Milestone Critical Path Slack (Days Pending)</li>
+              <li class="flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Right-of-Way (ROW) & Statutory Clearance Latency</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 6: WHAT-IF SIMULATOR (Screen 6 / Module 9) -->
+      <!-- ========================================================================= -->
+      <div id="tab-simulator" class="hidden space-y-6">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Prescriptive What-If Intervention Sandbox</h2>
+          <p class="text-xs text-slate-500">Simulate administrative interventions and observe live model-predicted risk reduction</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Parameter Control Sliders -->
+          <div class="glass-card p-5 space-y-5 lg:col-span-2">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900">Target Project: PRJ-NHAI-882 (NH-66 Package 4)</h3>
+                <p class="text-xs text-slate-500">Baseline Sanction: ₹2,400 Cr | Current Delay: 9 Months</p>
+              </div>
+              <button onclick="resetSimulation()" class="text-xs text-blue-600 hover:underline font-semibold">Reset to Baseline</button>
+            </div>
+
+            <!-- Slider 1 -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span>Milestone M3 Backlog Resolution</span>
+                <span id="val-milestone" class="text-blue-600 font-bold">Accelerate by 2 Months</span>
+              </div>
+              <input type="range" min="0" max="6" value="2" id="slider-milestone" oninput="runSimulation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>0 Months (No Intervention)</span>
+                <span>3 Months</span>
+                <span>6 Months (Complete Recovery)</span>
+              </div>
+            </div>
+
+            <!-- Slider 2 -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span>Physical Progress Acceleration</span>
+                <span id="val-progress" class="text-blue-600 font-bold">+10% Physical Recovery</span>
+              </div>
+              <input type="range" min="0" max="30" value="10" id="slider-progress" oninput="runSimulation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>Current (38%)</span>
+                <span>+15% (53%)</span>
+                <span>+30% (68% Match Spend)</span>
+              </div>
+            </div>
+
+            <!-- Slider 3 -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span>Vendor Capacity & Resource Infusion</span>
+                <span id="val-vendor" class="text-blue-600 font-bold">+25% Dedicated Equipment</span>
+              </div>
+              <input type="range" min="0" max="50" value="25" id="slider-vendor" oninput="runSimulation()" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+              <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                <span>Standard Resources</span>
+                <span>+25% Additional Crews</span>
+                <span>+50% Full Surge Deploy</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Simulation Result Card -->
+          <div class="glass-card p-5 bg-gradient-to-b from-slate-900 to-slate-950 text-white flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">Simulated Project Outcome</div>
+              <div class="text-xs text-slate-400">Model: LightGBM Prescriptive Sandbox</div>
+
+              <div class="mt-6 flex items-center justify-between">
+                <div>
+                  <div class="text-xs text-slate-400">Simulated Risk Score</div>
+                  <div id="sim-risk-score" class="text-4xl font-extrabold text-emerald-400 mt-1">57 <span class="text-sm font-semibold text-slate-300">/ 100</span></div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-slate-400">Baseline Score</div>
+                  <div class="text-xl font-bold text-red-400 line-through mt-1">86 / 100</div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-slate-800 space-y-2 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Simulated Cost Overrun:</span>
+                  <span id="sim-cost" class="font-bold text-emerald-300">₹190 Cr (Orig: ₹420 Cr)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Simulated Delay Horizon:</span>
+                  <span id="sim-time" class="font-bold text-emerald-300">3 Months (Orig: 9 Months)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Taxpayer Savings Delta:</span>
+                  <span id="sim-savings" class="font-bold text-emerald-400">+₹230 Crore Saved</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 p-3 bg-slate-800/80 rounded-lg text-[11px] text-slate-300 border border-slate-700">
+              <strong class="text-blue-400">Simulation Summary:</strong> Accelerating milestone M3 by 2 months and improving physical progress by 10% drops project risk tier from <strong>Critical (86)</strong> to <strong>Medium (57)</strong>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- TAB 7: AI PROJECT ASSISTANT (RAG / Screen 7) -->
+      <!-- ========================================================================= -->
+      <div id="tab-assistant" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Grounded Project Intelligence Assistant</h2>
+            <p class="text-xs text-slate-500">Query PAIMANA infrastructure databases and ML forecasts using natural language (RAG-backed)</p>
+          </div>
+          <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded font-semibold flex items-center gap-1">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Strict SQL & DB Verification (Zero Hallucination)
+          </span>
+        </div>
+
+        <div class="glass-card flex flex-col h-[520px] overflow-hidden">
+          
+          <!-- Chat Message Thread -->
+          <div id="chat-box" class="flex-1 p-5 overflow-y-auto space-y-4 text-xs custom-scrollbar">
+            
+            <!-- Bot Welcome -->
+            <div class="flex items-start gap-3 max-w-2xl">
+              <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 font-bold">AI</div>
+              <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 leading-relaxed">
+                Hello! I am your <strong>PAIMANA Infrastructure Intelligence Copilot</strong>. I have indexed all <strong>1,981 ongoing Central Sector projects</strong> from the April 2026 monitoring report. You can ask me to find high-risk projects, explain delay causes, or benchmark sector costs.
+              </div>
+            </div>
+
+            <!-- User Sample 1 -->
+            <div class="flex items-start gap-3 max-w-2xl ml-auto flex-row-reverse">
+              <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0 font-bold">PO</div>
+              <div class="bg-blue-600 text-white p-3.5 rounded-2xl rounded-tr-none leading-relaxed">
+                Which highway projects in Maharashtra have a cost overrun probability greater than 80%?
+              </div>
+            </div>
+
+            <!-- Bot Response 1 -->
+            <div class="flex items-start gap-3 max-w-2xl">
+              <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 font-bold">AI</div>
+              <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 leading-relaxed space-y-2">
+                <div class="text-slate-600 text-[11px] font-mono">Retrieved 1 matching project from PostgreSQL:</div>
+                <div class="p-2.5 bg-white rounded-lg border border-slate-200">
+                  <div class="font-bold text-slate-900">PRJ-NHAI-882: NH-66 Four-Laning & Bridge Package 4</div>
+                  <div class="text-slate-600 mt-1">• Approved Cost: ₹2,400 Cr | Predicted Overrun: <strong>₹420 Cr (82% prob)</strong></div>
+                  <div class="text-slate-600">• Primary Cause: 23% divergence between physical progress (38%) and financial outlay (61%).</div>
+                </div>
+                <div>Would you like to simulate risk mitigation or inspect the TreeSHAP waterfall?</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Suggested Quick Prompts -->
+          <div class="px-5 py-2 bg-slate-50 border-t border-slate-100 flex items-center gap-2 overflow-x-auto text-[11px]">
+            <span class="text-slate-400 font-semibold shrink-0">Try asking:</span>
+            <button onclick="sendQuickPrompt('Why is Western Freight Corridor flagged as Critical?')" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full whitespace-nowrap transition">"Why is Western Freight Corridor flagged as Critical?"</button>
+            <button onclick="sendQuickPrompt('Compare Railways vs Highways historical time overruns')" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full whitespace-nowrap transition">"Compare Railways vs Highways overruns"</button>
+            <button onclick="sendQuickPrompt('Show top 5 mega projects with delay > 12 months')" class="bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full whitespace-nowrap transition">"Show top 5 mega projects with delay > 12 mo"</button>
+          </div>
+
+          <!-- Chat Input Bar -->
+          <div class="p-3.5 bg-white border-t border-slate-200 flex items-center gap-2">
+            <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="Ask anything about 1,981 PAIMANA infrastructure projects..." class="flex-1 text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <span>Send</span> <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- JavaScript Functionality -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Chart.js Instances
+    let sectorChartInstance = null;
+    let riskDonutInstance = null;
+
+    function initCharts() {
+      // 1. Sector Bar Chart
+      const ctxSector = document.getElementById('sectorChart')?.getContext('2d');
+      if (ctxSector && !sectorChartInstance) {
+        sectorChartInstance = new Chart(ctxSector, {
+          type: 'bar',
+          data: {
+            labels: ['Highways (MoRTH)', 'Railways', 'Power & Energy', 'Petroleum', 'Coal & Mining', 'Urban Metro'],
+            datasets: [
+              {
+                label: 'Predicted Cost Overrun (%)',
+                data: [18.4, 21.6, 11.2, 5.4, 14.8, 16.2],
+                backgroundColor: '#3b82f6',
+                borderRadius: 4
+              },
+              {
+                label: 'Predicted Schedule Delay (Months)',
+                data: [9.2, 14.5, 6.1, 2.3, 8.4, 11.0],
+                backgroundColor: '#f59e0b',
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } }
+            },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+
+      // 2. Risk Segmentation Donut Chart
+      const ctxDonut = document.getElementById('riskDonutChart')?.getContext('2d');
+      if (ctxDonut && !riskDonutInstance) {
+        riskDonutInstance = new Chart(ctxDonut, {
+          type: 'doughnut',
+          data: {
+            labels: ['Low Risk (0-30)', 'Medium Risk (31-60)', 'High Risk (61-80)', 'Critical (81-100)'],
+            datasets: [{
+              data: [1120, 519, 253, 89],
+              backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#dc2626'],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            cutout: '72%'
+          }
+        });
+      }
+    }
+
+    // Tab Switching Logic
+    const tabs = ['tab-national', 'tab-explorer', 'tab-intelligence', 'tab-early-warning', 'tab-cuf', 'tab-simulator', 'tab-assistant'];
+    const navs = ['nav-national', 'nav-explorer', 'nav-intelligence', 'nav-early-warning', 'nav-cuf', 'nav-simulator', 'nav-assistant'];
+    const titles = {
+      'tab-national': 'National Infrastructure Monitoring Overview',
+      'tab-explorer': 'PAIMANA Project Portfolio Explorer (1,981 Projects)',
+      'tab-intelligence': 'Explainable AI (XAI) & Single Project Intelligence',
+      'tab-early-warning': 'Real-Time Early Warning & Anomaly Triage Hub',
+      'tab-cuf': 'CUF Feature Assessment & Model Benchmarks',
+      'tab-simulator': 'Prescriptive What-If Intervention Simulator',
+      'tab-assistant': 'Grounded AI Project Intelligence Copilot'
+    };
+
+    function switchTab(targetTabId) {
+      tabs.forEach(tabId => {
+        const el = document.getElementById(tabId);
+        if (el) el.classList.add('hidden');
+      });
+
+      navs.forEach(navId => {
+        const navEl = document.getElementById(navId);
+        if (navEl) {
+          navEl.classList.remove('nav-active');
+          navEl.classList.add('text-slate-400');
+        }
+      });
+
+      const activeTab = document.getElementById(targetTabId);
+      if (activeTab) activeTab.classList.remove('hidden');
+
+      const activeNav = document.getElementById('nav-' + targetTabId.replace('tab-', ''));
+      if (activeNav) {
+        activeNav.classList.add('nav-active');
+        activeNav.classList.remove('text-slate-400');
+      }
+
+      document.getElementById('page-title').innerText = titles[targetTabId] || 'MoSPI PAIMANA Dashboard';
+
+      if (targetTabId === 'tab-national') {
+        setTimeout(initCharts, 50);
+      }
+      lucide.createIcons();
+    }
+
+    function openProjectDetail(projId) {
+      switchTab('tab-intelligence');
+    }
+
+    // What-If Prescriptive Sandbox Calculation
+    function runSimulation() {
+      const milestone = parseInt(document.getElementById('slider-milestone').value);
+      const progress = parseInt(document.getElementById('slider-progress').value);
+      const vendor = parseInt(document.getElementById('slider-vendor').value);
+
+      document.getElementById('val-milestone').innerText = `Accelerate by ${milestone} Months`;
+      document.getElementById('val-progress').innerText = `+${progress}% Physical Recovery`;
+      document.getElementById('val-vendor').innerText = `+${vendor}% Dedicated Equipment`;
+
+      // Prescriptive formula
+      const baseRisk = 86;
+      const reduction = (milestone * 6) + (progress * 0.9) + (vendor * 0.2);
+      const newRisk = Math.max(25, Math.round(baseRisk - reduction));
+
+      const newCostOverrun = Math.max(50, Math.round(420 - (reduction * 8)));
+      const newDelay = Math.max(1, Math.round(9 - (milestone * 1.1) - (progress * 0.1)));
+      const savings = 420 - newCostOverrun;
+
+      document.getElementById('sim-risk-score').innerHTML = `${newRisk} <span class="text-sm font-semibold text-slate-300">/ 100</span>`;
+      document.getElementById('sim-cost').innerText = `₹${newCostOverrun} Cr (Orig: ₹420 Cr)`;
+      document.getElementById('sim-time').innerText = `${newDelay} Months (Orig: 9 Months)`;
+      document.getElementById('sim-savings').innerText = `+₹${savings} Crore Saved`;
+    }
+
+    function resetSimulation() {
+      document.getElementById('slider-milestone').value = 0;
+      document.getElementById('slider-progress').value = 0;
+      document.getElementById('slider-vendor').value = 0;
+      runSimulation();
+    }
+
+    // AI Chat Assistant Interaction
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chat-box');
+      
+      // User message
+      chatBox.innerHTML += `
+        <div class="flex items-start gap-3 max-w-2xl ml-auto flex-row-reverse">
+          <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center shrink-0 font-bold">PO</div>
+          <div class="bg-blue-600 text-white p-3.5 rounded-2xl rounded-tr-none leading-relaxed">${text}</div>
+        </div>
+      `;
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Simulated RAG Response
+      setTimeout(() => {
+        chatBox.innerHTML += `
+          <div class="flex items-start gap-3 max-w-2xl">
+            <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 font-bold">AI</div>
+            <div class="bg-slate-100 p-3.5 rounded-2xl rounded-tl-none text-slate-800 leading-relaxed space-y-2">
+              <div class="text-slate-600 text-[11px] font-mono">Retrieved from PostgreSQL & XGBoost Model:</div>
+              <p>Analyzing your query against the active 1,981 project dataset: <strong>Western Dedicated Freight Corridor (PRJ-RAIL-419)</strong> currently has the largest monetary exposure (₹1,850 Cr predicted escalation, 14-month projected delay) primarily driven by signaling contractor revision disputes.</p>
+            </div>
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        lucide.createIcons();
+      }, 700);
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById('chat-input').value = promptText;
+      sendChatMessage();
+    }
+
+    // Window load init
+    window.onload = () => {
+      initCharts();
+      runSimulation();
+    };
+  </script>
+</body>
+</html>
